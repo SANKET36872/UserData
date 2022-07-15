@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Details</title>
+    <!-- Get Bootsrap CSS -->
+    <!-- https://getbootstrap.com/ -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body >
+    
+    <h1 class="text-center" style="margin-right: 500px; margin-top: 50px; margin-bottom: 50px;">User Data Manipulation</h1>
+    <div class="container">
+      <div class="row">
+        <div class="col-8">
+          <div class="text-center bg-light p-2 border my-4">
+            <div class="row">
+              <div class="col-4">
+                <div class="form-group">
+                  <label for="name">Name</label>
+                  <input id="name" type="text" class="form-control" />
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="form-group">
+                  <label for="mobile">Mobile</label>
+                  <input id="mobile" type="tel" class="form-control" />
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input id="email" type="email" class="form-control" />
+                </div>
+              </div>
+            </div>
+            <button id="submit" class="btn btn-primary my-4">
+              Add New User
+            </button>
+          </div>
+          <div class="table-responsive">
+            <!-- for mobile resposponsive -->
+            <table id="table" class="table table-bordered text-center ">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Mobile</th>
+                  <th>Email</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-4">
+          <h2 style="margin-left: 200px;">JSON</h2>
+          <div class="border"style="margin-left: 200px;">
+            <pre id="jsonOutput"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- get bootstrap js -->
+    <!-- https://getbootstrap.com/ -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+      crossorigin="anonymous"
+    ></script>
+    <!-- get jQuery CDN -->
+    <!-- https://releases.jquery.com/ -->
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+    <!-- custom js -->
+    <script>
+      //on page complete load
+      $(document).ready(() => {
+        let id = 1;
+        $("#submit").on("click", () => {
+          let name = $("#name").val();
+          let email = $("#email").val();
+          let mobile = $("#mobile").val();
+          if (name && email && mobile) {
+			// add new row to table
+            $("#table > tbody").append(
+              `<tr id="` +
+                id +
+                `">
+                  <td class="tid">` +
+                id +
+                `</td>
+                  <td class="tname">` +
+                name +
+                `</td>
+                  <td class="tmobile">` +
+                mobile +
+                `</td>
+                  <td class="temail">` +
+                email +
+                `</td>
+                  <td>
+                    <button class="btn btn-sm btn-danger" onClick="deleteRow(` +
+                id +
+                `);">Delete</button>
+                  </td>
+                </tr>`
+            );
+            id = id + 1;
+			// clear input fields
+            $(".form-control").val("");
+            generateJSON();
+          } else alert("Please fill all details");
+        });
+      });
+      function deleteRow(id) {
+		// delete row from table
+        $("#table tr#" + id).remove();
+        generateJSON();
+      }
+      function generateJSON() {
+        let users = $("#table tbody tr");
+        let jsonOutput = [];
+		// loop through each table row
+        users.each((index, user) => {
+          let tid = $(user).find(".tid").html();
+          let tname = $(user).find(".tname").html();
+          let tmobile = $(user).find(".tmobile").html();
+          let temail = $(user).find(".temail").html();
+		//   create json formatted string
+          let userJSON = JSON.parse(
+            `
+				{
+					"id":"` +
+              tid +
+              `",
+					"name":"` +
+              tname +
+              `",
+					"mobile":"` +
+              tmobile +
+              `",
+					"email":"` +
+              temail +
+              `"
+				}
+			`
+          );
+		//   update json and add new row
+          jsonOutput = [...jsonOutput, userJSON];
+        });
+		// convert json to string and update pre tag
+        $("#jsonOutput").html(JSON.stringify(jsonOutput, null, "\t"));
+      }
+    </script>
+  </body>
+</html>
